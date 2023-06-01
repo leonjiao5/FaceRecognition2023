@@ -57,10 +57,54 @@ def verify(frame, model, detection_threshold, verification_threshold):
     return results, verdict
 
 
-def pos(e):
-    x = e.x
-    y = e.y
-    print(x, y)
+users = ["leon_jiao"]
+def change_user(add=True):
+    warning_label.config(text="")
+    entry_box = tk.Tk()
+    entry_box.title("Add User")
+
+    label1 = tk.Label(entry_box, text="First Name")
+    label1.grid(row=0, column=0)
+    label2 = tk.Label(entry_box, text="Last Name")
+    label2.grid(row=1, column=0)
+
+    entry1 = tk.Entry(entry_box)
+    entry1.grid(row=0, column=1)
+    entry2 = tk.Entry(entry_box)
+    entry2.grid(row=1, column=1)
+
+    submit_button = tk.Button(entry_box, text="Submit", command=lambda: submit(entry_box, entry1, entry2, add))
+    submit_button.grid(row=2, column=1)
+
+
+def submit(entry_box, entry1, entry2, add):
+    first = entry1.get().lower()
+    last = entry2.get().lower()
+    name = first + "_" + last
+
+    if add:
+        users.append(name)
+    else:
+        if name in users:
+            users.remove(name)
+        else:
+            warning_label.config(text="ERROR: User does not exist and was not removed.", font="Helvetica 16")
+            warning_label.place(x=500, y=50, anchor=tk.CENTER)
+
+    entry_box.destroy()
+
+
+def list_users():
+    users_window = tk.Tk()
+    users_window.title("Verified Users")
+    users_window.geometry("1250x800")
+
+    for index, user in enumerate(users):
+        image_path = os.path.join("application_data", "verification_images", user)
+        name_label = tk.Label(users_window, text=user, font="Helvetica 14")
+        name_label.place(x=(index%4)*300+175, y=350, anchor=tk.CENTER)
+
+    users_window.update()
 
 
 if __name__ == "__main__":
@@ -89,6 +133,23 @@ if __name__ == "__main__":
     video_label = tk.Label(main)
     video_label.place(x=225, y=100)
 
+    add = tk.Button(main)
+    add.config(text="Add User", font="Titillium_Web 15", width=250, height=120, background="#E0E0E0",
+                    image=pixel, compound="c", command=change_user)
+    add.place(x=700, y=100)
+
+    remove = tk.Button(main)
+    remove.config(text="Remove User", font="Titillium_Web 15", width=250, height=120, background="#E0E0E0",
+                    image=pixel, compound="c", command=lambda: change_user(False))
+    remove.place(x=700, y=240)
+
+    list_user = tk.Button(main)
+    list_user.config(text="List Verified Users", font="Titillium_Web 15", width=250, height=120, background="#E0E0E0",
+                       image=pixel, compound="c", command=list_users)
+    list_user.place(x=700, y=380)
+
+    warning_label = tk.Label(main)
+
     # Display webcam feed
     while True:
         ret, frame = video.read()
@@ -103,9 +164,3 @@ if __name__ == "__main__":
         video_label.imgtk = imgtk
         video_label.configure(image=imgtk)
         main.update()
-
-
-
-    # Run
-    # main.bind("<Motion>", pos)
-    # main.mainloop()
