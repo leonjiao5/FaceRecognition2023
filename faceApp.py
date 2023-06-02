@@ -10,6 +10,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Layer, Input, Conv2D, MaxPooling2D, Dense, Flatten
 
 import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 class L1Dist(Layer):
@@ -36,6 +37,7 @@ def preprocess(file_path):
 
 
 def verify(frame, model, detection_threshold, verification_threshold):
+    status.configure(text="Processing...")
     cv2.imwrite(os.path.join("application_data", "input_image", "input_image.jpg"), frame)
     results = []
     for image in os.listdir(os.path.join("application_data", "verification_images")):
@@ -57,7 +59,7 @@ def verify(frame, model, detection_threshold, verification_threshold):
     return results, verdict
 
 
-users = ["leon_jiao"]
+users = ["Leon_Jiao"]
 def change_user(add=True):
     warning_label.config(text="")
     entry_box = tk.Tk()
@@ -78,8 +80,8 @@ def change_user(add=True):
 
 
 def submit(entry_box, entry1, entry2, add):
-    first = entry1.get().lower()
-    last = entry2.get().lower()
+    first = entry1.get()
+    last = entry2.get()
     name = first + "_" + last
 
     if add:
@@ -97,15 +99,29 @@ def submit(entry_box, entry1, entry2, add):
 def list_users():
     users_window = tk.Tk()
     users_window.title("Verified Users")
-    users_window.geometry("1250x800")
+    # users_window.geometry("1250x800")
+
+    container = ttk.Frame(users_window)
+    canvas = tk.Canvas(container)
+    scroll = ttk.Scrollbar(container, orient="vertical", command=canvas.yview)
+
+    scroll_frame = ttk.Frame(canvas)
+    scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    canvas.create_window((0,0), window=scroll_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scroll.set)
 
     for index, user in enumerate(users):
-        image_path = os.path.join("application_data", "verification_images", user)
-        name_label = tk.Label(users_window, text=user, font="Helvetica 14")
-        name_label.place(x=(index%4)*300+175, y=350, anchor=tk.CENTER)
+        # image_path = os.path.join("application_data", "verification_images", user)
+        name_label = tk.Label(scroll_frame, text=user, font="Helvetica 14")
+        name_label.pack(anchor=tk.CENTER)
+        # name_label.place(x=(index%4)*300+175, y=(index//4)*350+300, anchor=tk.CENTER)
+
+    container.pack()
+    canvas.pack(side="left", fill="both", expand=True)
+    scroll.pack(side="right", fill="y")
+    scroll_frame.pack()
 
     users_window.update()
-
 
 if __name__ == "__main__":
     # Load the Neural Network we will be using
@@ -124,7 +140,7 @@ if __name__ == "__main__":
     button = tk.Button(main)
     pixel = tk.PhotoImage(width=1, height=1)
     button.config(text="Verify", font="Titillium_Web 18", width=600, height=50, background="#CFCFCF",
-                  image=pixel, compound="c", command=lambda: verify(frame, model, 0.5, 0.5))
+                  image=pixel, compound="c", command=lambda: verify(frame, model, 0.8, 0.8))
     button.place(x=50, y=450)
 
     status = tk.Label(main, text="Status: Uninitiated", font="Titillium_Web 15")
