@@ -22,6 +22,7 @@ def encode_known_faces(model: str="hog", encodings_location: Path=DEFAULT_ENCODI
         face_locations = fr.face_locations(image, model=model)
         face_encodings = fr.face_encodings(image, face_locations)
 
+
         for encoding in face_encodings:
             names.append(name)
             encodings.append(encoding)
@@ -74,6 +75,6 @@ def validate(model: str="hog"):
             recognize_faces(image_location=str(filepath.absolute()), model=model)
 
 
-# encode_known_faces()
+encode_known_faces()
 # recognize_faces("unknown.webp")
-validate()
+# validate()

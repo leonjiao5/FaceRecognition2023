@@ -10,7 +10,6 @@ from tkinter import ttk
 import cv2
 import numpy as np
 import os
-import uuid
 
 ENCODINGS_PATH = Path("application_data/encodings.pkl")
 NEW_ENCODINGS_PATH = Path("application_data/new_encodings.pkl")
@@ -154,7 +153,7 @@ def submit(entry_box, entry1, entry2):
     top, right, bottom, left = face_location[0]
     face_image = input_image[top:bottom, left:right, :]
 
-    cv2.imwrite(os.path.join(path_name, "{}.jpg".format(uuid.uuid1())), face_image)
+    cv2.imwrite(os.path.join(path_name, "image0.jpg"), face_image)
 
     usernames.add(name)
     loaded_encodings["names"].append(name)
