@@ -1,0 +1,20 @@
+.ipynb_checkpoints/
+
+# Project data
+application_data/verification_images/
+data/
+data2/
+lfw/
+
+# Unrelated training data
+training/
+
+# Training checkpoints
+training_checkpoints/
+
+# Test images (will refactor)
+musk.webp
+musk2.jpg
+
+# Trained models
+*.h5
